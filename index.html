@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta property="qc:admins" content="4551576001466544341336470" />
+    <meta property="wb:webmaster" content="067f0a97723be540" />
+    <!-- Site Properities -->
+    <title>HugeChat - Semantic</title>
+    <link rel="stylesheet" type="text/css" href="dist/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+
+<body>
+
+    <div class="ui large top fixed menu teal inverted top-nav">
+        <a class="item header">巨信 </a>
+        <div class="right menu">
+            <div class="ui dropdown icon item" tabindex="0">
+                <i class="plus icon"></i>
+                <div class="menu transition hidden" tabindex="-1">
+                    <div class="item"><i class="wechat icon"></i> 发起群聊</div>
+                    <div class="item"><i class="plus icon"></i> 添加朋友</div>
+                    <div class="item"><i class="qrcode icon"></i> 扫一扫</div>
+                    <div class="divider"></div>
+                    <div class="item"><i class="help circle icon"></i> 帮助与反馈</div>
+                    <div class="item" onclick="$('#reg').modal('show')"><i class="add user icon"></i> 注册</div>
+                    <div class="item" onclick="$('#login').modal('show')"><i class="sign in icon"></i> 登录</div>
+                    <div class="item" onclick="hugeChat.logout()"><i class="sign out icon"></i> 退出</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui large aligned divided selection list" id="recentlyChat">
+    </div>
+
+
+    <div class="ui bottom fixed labeled icon menu four item  teal inverted bottom-nav">
+        <a class="item"><i class="comments icon"> <span class="reddot">12</span></i> 巨信 </a>
+        <a class="item"><i class="users icon"></i> 朋友 </a>
+        <a class="item"><i class="heart icon"></i> 心情 </a>
+        <a class="item"><i class="spy icon"></i> 我的 </a>
+    </div>
+
+    <div class="ui modal" id="login">
+        <i class="close icon"></i>
+        <div class=" header">
+            登录
+        </div>
+        <div class="content">
+            <div class="ui two column middle aligned very relaxed stackable grid">
+                <div class="center aligned column">
+                    <div class="ui red message" style="display:none;" id="loginFaileMsg">Red</div>
+                    <div class="ui form">
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <input type="email" id="email" placeholder="邮箱">
+                                <i class="mail icon"></i>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <input type="password" id="password" placeholder="密码">
+                                <i class="lock icon"></i>
+                            </div>
+                        </div>
+                        <div class="ui big fluid teal submit button" onclick="hugeChat.login('password')">登录</div>
+                    </div>
+                </div>
+                <div class="ui vertical divider">Or</div>
+                <div class="center aligned column">
+                    <div class="ui center aligned basic segment">
+                 
+                            <button class="ui massive blue circular icon button" onclick="hugeChat.login('qq')">
+                                <i class="qq icon"></i>
+                            </button>
+                            <button class="ui massive orange  circular  icon button"  onclick="hugeChat.login('weibo')">
+                                <i class="weibo icon"></i>
+                            </button>
+
+                  
+                        </div>
+                        <div class="ui horizontal divider">Or</div>
+                        <div class="ui fluid grey basic button" onclick="hugeChat.changeToReg()"><i class="add user icon"></i> 创建新用户 </div>
+                    </div>
+
+
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ui modal" id="reg">
+        <i class="close icon"></i>
+        <div class=" header">
+            注册
+        </div>
+        <div class="content">
+            <div class="ui two column middle aligned very relaxed stackable grid">
+                <div class="center aligned column">
+                    <div class="ui red message" style="display:none;" id="regFaileMsg">Red</div>
+                    <div class="ui form">
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <input type="email" id="reg_email" placeholder="邮箱">
+                                <i class="mail icon"></i>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <input type="text" id="reg_nickname" placeholder="昵称">
+                                <i class="lock icon"></i>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui left icon input">
+                                <input type="password" id="reg_password" placeholder="密码">
+                                <i class="lock icon"></i>
+                            </div>
+                        </div>
+                        <div class="ui big fluid teal submit button" onclick="hugeChat.reg()">注册</div>
+                    </div>
+                </div>
+                <div class="ui vertical divider">Or </div>
+                <div class="center aligned column">
+                    <div class="ui fluid basic button"><i class="spy icon"></i> 匿名登录 </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="dist/jquery.min.js"></script>
+    <script type="text/javascript" src="dist/semantic.min.js"></script>
+    <script src="https://cdn.wilddog.com/js/client/current/wilddog.js"></script>
+    <script type="text/javascript" src="js/base.js"></script>
+    <script type="text/javascript">
+        var chat_ref = ref.child("chat");
+
+        //监听终端用户认证状态
+        ref.onAuth(function(authData) {
+            window.authData = authData;
+            if (authData) {
+                user_ref.orderByChild("username").on("value", function(snapshot) {
+                    var data = snapshot.val();
+                   
+                    var html = [];
+
+                    for (user in data) {
+
+                        if(authData.uid != user){
+                            html.push('<div class="item" id="'+ user +'" onclick="openChat(this)">')
+                            html.push('<img class="ui avatar image" src="'+ data[user].avatar +'">')
+                            html.push('<div class="content">')
+                            html.push('<div class="header">'+ data[user].username +'</div>')
+                            html.push('<div class="description">'+ (data[user].desc || '') +'</div>')
+                            html.push('<div></div></div></div>')
+                        }
+                    }
+
+                    $("#recentlyChat").html(html.join(""))
+
+                });
+               
+            } else {
+                $("#login").modal('show');
+            }
+        });
+
+        
+
+
+        function openChat(el){
+            var $this = $(el);
+            var arr = [authData.uid,$this.attr("id")];
+            var chatKey = $.md5(arr.sort().join(""));
+            
+            chat_ref.child(chatKey).child("users").update(arr);
+
+            window.location.href = "separate-chat.html?chat="+chatKey;
+        }
+
+        $(function(){
+            $(".ui.top.fixed .dropdown").dropdown({on:'click'});
+        })
+    </script>
+
+</body>
+
+</html>

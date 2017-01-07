@@ -1,0 +1,19 @@
+body{padding-top:45px;}
+
+.ui.list{margin:0;}
+
+.ui.avatar.image, .ui.avatar.image img, .ui.avatar.image svg, .ui.avatar.images .image, .ui.avatar.images img, .ui.avatar.images svg{  width: 3em; height: 3em;}
+.ui.list .list>.item .header, .ui.list>.item .header{margin-bottom:.5em;}
+.ui.item.bottom-nav .item{padding:.5em 1.14em;}
+.bottom-nav i {position: relative;}
+.bottom-nav i .reddot{position: absolute; width: 1.5em; height: 1.5em; top: 0; right: -.8em; background-color: #E75555; color: #FFF; border-radius: 50%; line-height: 1.5em;font-size: 0.1em}
+
+/*chat*/
+.ui.comments{max-width: 100%;margin:10px 10px 42px;}
+.ui.comments .comment>.avatar~.content {max-width:65%;}
+.ui.comments .comment .text img{width: 100%;}
+.ui.comments .my.comment {overflow: hidden;}
+.ui.comments .my.comment .content,.ui.comments .my.comment .avatar{float: right;margin-left: 0;}
+.ui.comments .my.comment a.author { display: block;text-align: right;padding-right: 1em;}
+
+#message-input .item {padding:.2em .5em;}
